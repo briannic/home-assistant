@@ -10,6 +10,16 @@
 #   3. In HA UI: Developer Tools → YAML → Restart (or "Reload Automations"
 #      for automations-only changes that don't require a full restart).
 
+homeassistant:
+  # Pin the URLs HA advertises so integrations like Sonos (which subscribe
+  # via UPnP and need a callback URL) hand the right address to the
+  # speaker. Without this, HA running network_mode: host can guess wrong —
+  # e.g. pick a docker-bridge or tailscale IP — and the speaker can't
+  # reach back, falling back to polling with a "Subscription to <IP>
+  # failed" warning in the log.
+  internal_url: http://huron.local:8123
+  external_url: http://palmgren.local:3004
+
 # Default integrations + UI. Bundles most of what a new HA install needs:
 # default config, person tracking, system stats, etc.
 default_config:
