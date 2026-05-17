@@ -1,1 +1,16 @@
-[]
+- id: nightly_backup_0300
+  alias: "Nightly HA backup (03:00)"
+  description: >
+    Creates a full HA backup tarball under /config/backups/ each night
+    at 03:00 local. Tarball includes the SQLite recorder DB, .storage/
+    (owner account, OAuth tokens, area/entity registry), all YAML
+    config, and integrations. Off-host shipping (rsync to S3 / hudson)
+    happens via the huron-side cron in infra — see
+    apps/home-assistant.md for the full backup pipeline.
+  trigger:
+    - platform: time
+      at: "03:00:00"
+  action:
+    - service: backup.create
+      data: {}
+  mode: single
