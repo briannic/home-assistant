@@ -23,6 +23,7 @@ themes/                 - UI themes (none yet)
 custom_components/      - HACS or hand-installed integrations (none yet)
 blueprints/             - automation blueprints (none yet)
 secrets.yaml.example    - template for the git-ignored secrets.yaml
+IDEAS.md                - automation pitches, hardware to buy, project backlog
 .gitignore              - HA runtime state (db, .storage, logs, secrets)
 ```
 

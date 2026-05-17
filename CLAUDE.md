@@ -20,6 +20,7 @@ Brian's Home Assistant configuration. **Sibling** of `infra`, `go-trade`, `go-wx
 | Reusable scripts | [`scripts.yaml`](scripts.yaml) |
 | Scene definitions | [`scenes.yaml`](scenes.yaml) |
 | Secret template (for fresh huron) | [`secrets.yaml.example`](secrets.yaml.example) |
+| Automation pitches / hardware backlog / project ideas | [`IDEAS.md`](IDEAS.md) |
 | How HA gets *deployed* on huron | [`infra/hosts/huron/third-party/home-assistant/`](../infra/hosts/huron/third-party/home-assistant/) |
 | Cross-app contract (port, URL, integration list) | [`infra/apps/home-assistant.md`](../infra/apps/home-assistant.md) |
 
