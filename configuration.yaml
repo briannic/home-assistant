@@ -11,13 +11,14 @@
 #      for automations-only changes that don't require a full restart).
 
 homeassistant:
-  # Pin the URLs HA advertises so integrations like Sonos (which subscribe
-  # via UPnP and need a callback URL) hand the right address to the
-  # speaker. Without this, HA running network_mode: host can guess wrong —
-  # e.g. pick a docker-bridge or tailscale IP — and the speaker can't
-  # reach back, falling back to polling with a "Subscription to <IP>
-  # failed" warning in the log.
-  internal_url: http://huron.local:8123
+  # Pin the URLs HA advertises so integrations like Sonos (UPnP
+  # subscription callbacks) and Ecowitt (webhook posts) hand the right
+  # address to the device. Both URLs go through huron's nginx vhost on
+  # :3004 — :8123 is loopback-only at huron's ufw (no LAN allow rule),
+  # so LAN-side devices can only reach HA through nginx. nginx proxies
+  # back to localhost:8123 and HA's trusted_proxies block below accepts
+  # the X-Forwarded-For headers.
+  internal_url: http://huron.local:3004
   external_url: http://palmgren.local:3004
 
 # Default integrations + UI. Bundles most of what a new HA install needs:
