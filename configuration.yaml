@@ -1,0 +1,36 @@
+# Home Assistant top-level config for huron's HA container.
+#
+# This file is loaded by HA at startup. Everything else (automations,
+# scripts, scenes) lives in sibling files via the `!include` mechanism
+# below, so it's easy to edit them in isolation.
+#
+# To deploy a config change:
+#   1. Edit here, commit, push.
+#   2. ssh huron 'cd /opt/home-assistant/config && git pull'
+#   3. In HA UI: Developer Tools → YAML → Restart (or "Reload Automations"
+#      for automations-only changes that don't require a full restart).
+
+# Default integrations + UI. Bundles most of what a new HA install needs:
+# default config, person tracking, system stats, etc.
+default_config:
+
+# Trust huron's nginx vhost (running on :3004) as the upstream proxy.
+# Without this, HA refuses requests with X-Forwarded-For headers and
+# logs warnings on every page load.
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+    - 192.168.4.40   # huron's LAN IP (nginx running on the same host)
+
+# Pull automations and scripts from their own files so each is its own
+# git-friendly artifact.
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Themes folder — drop .yaml theme files in themes/ and they show up
+# in the HA UI under Profile → Theme.
+frontend:
+  themes: !include_dir_merge_named themes

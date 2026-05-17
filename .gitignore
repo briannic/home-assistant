@@ -1,0 +1,29 @@
+# Secrets — referenced via `!secret` in YAML, values live in 1Password.
+secrets.yaml
+
+# HA runtime state — managed by the app, not source.
+.storage/
+.cloud/
+home-assistant_v2.db*
+home-assistant.log*
+OZW_Log.txt
+.HA_VERSION
+.uuid
+
+# Python deps cached inside /config by some integrations.
+deps/
+
+# TTS cache — regenerated on demand.
+tts/
+
+# Image cache from media integrations.
+image/
+
+# Backups — written by HA's built-in snapshot. Off-host backups belong elsewhere.
+backups/
+
+# Local debug / scratch
+*.pyc
+__pycache__/
+.DS_Store
+*.swp
