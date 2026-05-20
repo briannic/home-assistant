@@ -14,3 +14,27 @@
     - service: backup.create
       data: {}
   mode: single
+
+- id: front_door_left_open
+  alias: "Front door left open > 5 min → Pushover"
+  description: >
+    If the front-door contact sensor stays open continuously for 5
+    minutes, send a Pushover alert. Mode: single — won't re-fire
+    while the door remains open, so a single long-open event yields
+    one ping (not one per minute). Re-arms automatically when the
+    door closes (the state-change to `off` clears the `for:` timer).
+
+    Entity: binary_sensor.front_door_contact (Aqara MCCGQ11LM via
+    Z2M MQTT discovery; friendly_name "Front Door" in Z2M maps to
+    snake_case entity_id). State `on` = open, `off` = closed.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door_contact
+      to: "on"
+      for: "00:05:00"
+  action:
+    - service: notify.pushover
+      data:
+        title: "Front door open"
+        message: "The front door has been open for 5 minutes."
+  mode: single
