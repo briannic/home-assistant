@@ -1,122 +1,113 @@
 views:
   - title: Climate
-    path: climate
-    icon: mdi:thermometer
-    cards:
-      - type: heading
-        heading: Outdoor
-        heading_style: title
+    type: sections
+    max_columns: 4
+    sections:
+      - type: grid
+        title: Outdoor
+        cards:
+          - type: sensor
+            entity: sensor.gw1100b_outdoor_temperature
+            name: Temperature
+            graph: line
+            hours_to_show: 24
 
-      - type: sensor
-        entity: sensor.gw1100b_outdoor_temperature
-        name: Temperature
-        graph: line
-        hours_to_show: 24
+          - type: sensor
+            entity: sensor.gw1100b_humidity
+            name: Humidity
+            graph: line
+            hours_to_show: 24
 
-      - type: sensor
-        entity: sensor.gw1100b_humidity
-        name: Humidity
-        graph: line
-        hours_to_show: 24
+          - type: glance
+            entities:
+              - entity: sensor.gw1100b_feels_like_temperature
+                name: Feels Like
+              - entity: sensor.gw1100b_dewpoint
+                name: Dewpoint
+              - entity: sensor.gw1100b_windchill
+                name: Windchill
 
-      - type: glance
-        entities:
-          - entity: sensor.gw1100b_feels_like_temperature
-            name: Feels Like
-          - entity: sensor.gw1100b_dewpoint
-            name: Dewpoint
-          - entity: sensor.gw1100b_windchill
-            name: Windchill
+          - type: glance
+            entities:
+              - entity: sensor.gw1100b_wind_speed
+                name: Wind
+              - entity: sensor.gw1100b_wind_gust
+                name: Gust
+              - entity: sensor.gw1100b_relative_pressure
+                name: Pressure
 
-      - type: glance
-        entities:
-          - entity: sensor.gw1100b_wind_speed
-            name: Wind
-          - entity: sensor.gw1100b_wind_gust
-            name: Gust
-          - entity: sensor.gw1100b_relative_pressure
-            name: Pressure
+          - type: glance
+            entities:
+              - entity: sensor.gw1100b_solar_radiation
+                name: Solar Rad
+              - entity: sensor.gw1100b_uv_index
+                name: UV Index
+              - entity: sensor.gw1100b_solar_lux
+                name: Solar Lux
 
-      - type: glance
-        entities:
-          - entity: sensor.gw1100b_solar_radiation
-            name: Solar Rad
-          - entity: sensor.gw1100b_uv_index
-            name: UV Index
-          - entity: sensor.gw1100b_solar_lux
-            name: Solar Lux
+          - type: glance
+            entities:
+              - entity: sensor.gw1100b_rain_rate_piezo
+                name: Rain Rate
+              - entity: sensor.gw1100b_daily_rain_piezo
+                name: Daily Rain
+              - entity: sensor.gw1100b_weekly_rain_piezo
+                name: Weekly Rain
 
-      - type: glance
-        entities:
-          - entity: sensor.gw1100b_rain_rate_piezo
-            name: Rain Rate
-          - entity: sensor.gw1100b_daily_rain_piezo
-            name: Daily Rain
-          - entity: sensor.gw1100b_weekly_rain_piezo
-            name: Weekly Rain
-
-      - type: heading
-        heading: Indoor
-        heading_style: title
-
-      - type: horizontal-stack
+      - type: grid
+        title: Indoor
         cards:
           - type: sensor
             entity: sensor.gw1100b_indoor_temperature
             name: Temperature
             graph: line
             hours_to_show: 24
+
           - type: sensor
             entity: sensor.gw1100b_indoor_humidity
             name: Humidity
             graph: line
             hours_to_show: 24
 
-      - type: heading
-        heading: Office
-        heading_style: title
-
-      - type: horizontal-stack
+      - type: grid
+        title: Office
         cards:
           - type: sensor
             entity: sensor.gw1100b_temperature_1
             name: Temperature
             graph: line
             hours_to_show: 24
+
           - type: sensor
             entity: sensor.gw1100b_humidity_1
             name: Humidity
             graph: line
             hours_to_show: 24
 
-      - type: heading
-        heading: Kids Room
-        heading_style: title
-
-      - type: horizontal-stack
+      - type: grid
+        title: Kids Room
         cards:
           - type: sensor
             entity: sensor.gw1100b_temperature_2
             name: Temperature
             graph: line
             hours_to_show: 24
+
           - type: sensor
             entity: sensor.gw1100b_humidity_2
             name: Humidity
             graph: line
             hours_to_show: 24
 
-      - type: heading
-        heading: Basement
-        heading_style: title
-
-      - type: horizontal-stack
+      - type: grid
+        title: Basement
         cards:
           - type: sensor
             entity: sensor.gw1100b_temperature_3
             name: Temperature
             graph: line
             hours_to_show: 24
+
           - type: sensor
             entity: sensor.gw1100b_humidity_3
             name: Humidity
