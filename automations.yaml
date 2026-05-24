@@ -23,11 +23,11 @@
     debounce to avoid sensor flicker). Re-arms on close.
   trigger:
     - platform: state
-      entity_id: binary_sensor.front_door_contact
+      entity_id: binary_sensor.0x00158d008c8b2049_door
       to: "on"
       for: "00:00:01"
   action:
-    - service: tts.google_translate_say
+    - service: tts.cloud_say
       data:
         entity_id: media_player.sonos_move
         message: "The front door is open."
@@ -42,7 +42,7 @@
     door remains open.
   trigger:
     - platform: state
-      entity_id: binary_sensor.front_door_contact
+      entity_id: binary_sensor.0x00158d008c8b2049_door
       to: "on"
       for: "00:01:00"
   action:
@@ -59,10 +59,10 @@
     Provides audible confirmation the door has been shut.
   trigger:
     - platform: state
-      entity_id: binary_sensor.front_door_contact
+      entity_id: binary_sensor.0x00158d008c8b2049_door
       to: "off"
   action:
-    - service: tts.google_translate_say
+    - service: tts.cloud_say
       data:
         entity_id: media_player.sonos_move
         message: "The front door is closed."
