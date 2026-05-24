@@ -41,6 +41,18 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+# Extra dashboards (YAML-managed). The default Overview dashboard stays
+# UI-managed (mode: storage). These add sidebar entries.
+lovelace:
+  mode: storage
+  dashboards:
+    climate-sensors:
+      mode: yaml
+      title: Climate Sensors
+      icon: mdi:thermometer
+      show_in_sidebar: true
+      filename: dashboards/climate.yaml
+
 # Themes folder — drop .yaml theme files in themes/ and they show up
 # in the HA UI under Profile → Theme.
 frontend:

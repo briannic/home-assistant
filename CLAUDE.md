@@ -20,12 +20,24 @@ Brian's Home Assistant configuration. **Sibling** of `infra`, `go-trade`, `go-wx
 | Reusable scripts | [`scripts.yaml`](scripts.yaml) |
 | Scene definitions | [`scenes.yaml`](scenes.yaml) |
 | Secret template (for fresh huron) | [`secrets.yaml.example`](secrets.yaml.example) |
+| YAML-managed dashboards | [`dashboards/`](dashboards/) |
 | Automation pitches / hardware backlog / project ideas | [`IDEAS.md`](IDEAS.md) |
 | How HA gets *deployed* on huron | [`infra/hosts/huron/third-party/home-assistant/`](../infra/hosts/huron/third-party/home-assistant/) |
 | Cross-app contract (port, URL, integration list) | [`infra/apps/home-assistant.md`](../infra/apps/home-assistant.md) |
 
+## Key integrations
+
+| Integration | Service / Entity pattern | Notes |
+|---|---|---|
+| TTS | `tts.cloud_say` | Nabu Casa Cloud TTS — `tts.google_translate_say` is **not** available |
+| Sonos | `media_player.sonos_move` | Auto-discovered via SSDP (`default_config`); one speaker (Move) |
+| Pushover | `notify.pushover` | Keys in `secrets.yaml` (1Password) |
+| Z2M door sensor | `binary_sensor.0x00158d008c8b2049_door` | Aqara MCCGQ11LM; `on` = open, `off` = closed |
+
 ## Deploy loop
 
 Config change → commit + push → `ssh huron 'cd /opt/home-assistant/config && git pull'` → reload from HA UI (Developer Tools → YAML → "Reload Automations" or "Restart").
+
+**Gotcha:** The HA UI editor reformats `automations.yaml` on save (removes quotes, changes indentation, renames `trigger`→`triggers`). If someone edits via UI on huron, the local working tree will have uncommitted changes that conflict with `git pull`. Fix with `git stash && git pull` on huron — the repo version is the source of truth.
 
 For container/image/network-level changes — that's `infra` territory.
