@@ -140,6 +140,44 @@ For HA specifically:
 
 This is small ($0-100 depending on USB drive) and high-value (HA config + history + integrations restored in one click after a disk failure).
 
+### 7. Family-reaching notifications (alerts to non-HA users)
+
+**Surveyed 2026-05-20.** Use case: door-left-open / leak-detected / similar HA alerts need to reach spouse (and eventually other family) in addition to Brian. Spouse doesn't use HA and shouldn't have to. Pushover via secrets.yaml works for Brian only — needs broader fan-out.
+
+**Provisional pick: HA Companion app on spouse's iPhone.** Free, native iOS push, works off-LAN over cellular with no Tailscale on her phone (notifications travel via Apple APNs through HA's free Nabu Casa push proxy — only huron needs outbound internet, which it has). Setup is ~5 min: create a HA user for her, install Home Assistant from App Store, log in once on LAN, allow notifications. From then on she's reachable as `notify.mobile_app_<her_device>` everywhere her phone has internet.
+
+Critically: she does NOT need to "use" HA. The Companion app is just a notification destination. She never opens it again after install.
+
+**Channels surveyed (ranked for this household's spouse-with-iPhone use case):**
+
+| Channel | Recurring cost | Friction for spouse | Off-LAN delivery | HA integration | Why not picked |
+|---|---|---|---|---|---|
+| **HA Companion (iOS push)** | **$0** | Install app, log in once | ✅ via APNs | First-party | — picked |
+| Pushover Family / Delivery Group | $5 one-time per device | Install app, $5 in-app | ✅ via Pushover servers | First-party | App brand unfamiliar; HA Companion is just as good and free |
+| Telegram bot + family group | $0 | Install Telegram, accept group invite | ✅ via Telegram servers | First-party, two-way (inline buttons) | Right answer for 3+ recipients on mixed OS; overkill for 1 spouse with iPhone |
+| Twilio SMS | ~$15/mo (10DLC reg + number + per-SMS) | None (regular text) | ✅ cellular | First-party | Only worth it if recipient won't install any app (flip phone). Spouse has iPhone. |
+| Signal | $0 | Install Signal, register | ✅ via Signal servers | Community (signal-cli daemon on huron) | Heavier setup (~30 min signal-cli + dedicated number registration). Privacy-leaning families only. |
+| Discord webhook | $0 | Install Discord, join server | ✅ | Webhook (trivial) | Gamer-branded; spouse unlikely to be in Discord. Useful for tech-team channels. |
+| WhatsApp | — | None (already installed by most) | ✅ | Brittle. Official Cloud API needs Meta Business Verification; unofficial (Baileys etc) gets banned. Avoid. |
+| iMessage | $0 | None | ✅ | Requires always-on Mac with AppleScript hacks. Don't. |
+| ntfy (self-host on huron) | $0 | Install ntfy app, subscribe to topic URL | ✅ | REST | Compelling for technical recipients; overkill for spouse-only. |
+| Email-to-SMS carrier gateway | $0 | None | ✅ | SMTP notify | Carriers are killing these (AT&T already partial). Don't build on it. |
+
+**Implementation pattern (whichever channel is picked):** add a second `notify.*` action to the automation alongside the existing `notify.pushover` for Brian. Both fire in parallel; either failing doesn't block the other. Example:
+
+```yaml
+action:
+  - service: notify.pushover                       # Brian
+    data: { title: "...", message: "..." }
+  - service: notify.mobile_app_spouse_iphone       # Spouse
+    data: { title: "...", message: "..." }
+```
+
+**Open questions:**
+- Once spouse is wired, is it worth dropping Pushover entirely and switching Brian to `notify.mobile_app_<brians_iphone>` too? Same iOS push UX, free, removes the third-party dependency. Pushover keys would stick around only for the chicago-side rip-dvd Pushover pings (which don't go through HA).
+- For "important" alerts (leak detected, smoke detected eventually), is Companion-app push enough? APNs is generally reliable but not 100% — Twilio SMS as a redundant second channel for the truly-critical handful of alerts may be worth ~$15/mo. Revisit when leak sensors land.
+- When other family (parent on Android, sibling on iPhone, etc.) needs to be looped in, does the math flip toward Telegram? At 3+ recipients on mixed OS, Telegram's group-chat fan-out + zero per-recipient cost starts winning.
+
 ---
 
 ## Open questions (not yet decided)
