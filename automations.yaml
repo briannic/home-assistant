@@ -15,26 +15,55 @@
       data: {}
   mode: single
 
-- id: front_door_left_open
-  alias: "Front door left open > 5 min → Pushover"
+- id: front_door_opened_tts
+  alias: "Front door opened → Sonos TTS"
   description: >
-    If the front-door contact sensor stays open continuously for 5
-    minutes, send a Pushover alert. Mode: single — won't re-fire
-    while the door remains open, so a single long-open event yields
-    one ping (not one per minute). Re-arms automatically when the
-    door closes (the state-change to `off` clears the `for:` timer).
-
-    Entity: binary_sensor.front_door_contact (Aqara MCCGQ11LM via
-    Z2M MQTT discovery; friendly_name "Front Door" in Z2M maps to
-    snake_case entity_id). State `on` = open, `off` = closed.
+    Aqara MCCGQ11LM via Z2M MQTT discovery. Announce on
+    the Sonos Move as soon as the front door opens (1 s
+    debounce to avoid sensor flicker). Re-arms on close.
   trigger:
     - platform: state
       entity_id: binary_sensor.front_door_contact
       to: "on"
-      for: "00:05:00"
+      for: "00:00:01"
+  action:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "The front door is open."
+  mode: single
+
+- id: front_door_open_1min_pushover
+  alias: "Front door open 1 min → Pushover"
+  description: >
+    If the front-door contact sensor stays open continuously for 1
+    minute, send a Pushover alert to phone. Escalation after the
+    immediate Sonos TTS. Mode: single — won't re-fire while the
+    door remains open.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door_contact
+      to: "on"
+      for: "00:01:00"
   action:
     - service: notify.pushover
       data:
         title: "Front door open"
-        message: "The front door has been open for 5 minutes."
+        message: "The front door has been open for 1 minute."
+  mode: single
+
+- id: front_door_closed_tts
+  alias: "Front door closed → Sonos TTS"
+  description: >
+    Announce on the Sonos Move when the front door closes.
+    Provides audible confirmation the door has been shut.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door_contact
+      to: "off"
+  action:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "The front door is closed."
   mode: single
