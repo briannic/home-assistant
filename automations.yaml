@@ -100,21 +100,19 @@
 
 # ─────────────────────────────────────────────────────────────────────
 # Water leak sensors (Aqara SJCGQ11LM). Leaks are time-critical, so these
-# fire IMMEDIATELY (no `for:` debounce). High-priority Companion-app push
-# (interruption-level: time-sensitive breaks through Focus/silent) plus a
-# spoken Sonos alert. NOTE: Sonos TTS is intentionally ON for leaks even
-# though door announcements were removed 2026-06-17 — a flood is rare and
-# worth an audible whole-home warning. Entity id standardized to
-# binary_sensor.leak_<spot>_water_leak in the HA UI (HA defaults it to
-# binary_sensor.0x..._moisture at discovery).
+# fire IMMEDIATELY (no `for:` debounce) via a high-priority Companion-app
+# push (interruption-level: time-sensitive breaks through Focus/silent).
+# Sonos TTS removed 2026-06-18 per preference — push only for now.
+# Entity id standardized to binary_sensor.sump_pump_water_leak in the HA
+# UI (HA defaults it to binary_sensor.0x..._moisture at discovery).
 # ─────────────────────────────────────────────────────────────────────
 
 # ── Sump pump ──
 - id: sump_pump_leak_detected
-  alias: "Sump pump leak detected → push + Sonos (critical)"
+  alias: "Sump pump leak detected → push (critical)"
   description: >
     Water at the basement sump pump. Fires the instant the sensor goes
-    wet (no debounce). High-priority phone push + spoken Sonos warning.
+    wet (no debounce). High-priority phone push (Sonos removed for now).
     Re-arms automatically when it dries out.
   trigger:
     - platform: state
@@ -129,10 +127,6 @@
           push:
             interruption-level: time-sensitive
           tag: sump_pump_leak
-    - service: tts.cloud_say
-      data:
-        entity_id: media_player.sonos_move
-        message: "Warning. Water leak detected at the sump pump in the basement."
   mode: single
 
 - id: sump_pump_leak_cleared
