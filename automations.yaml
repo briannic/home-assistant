@@ -97,3 +97,59 @@
         title: "Side door open"
         message: "The side door has been open for 1 minute."
   mode: single
+
+# ─────────────────────────────────────────────────────────────────────
+# Water leak sensors (Aqara SJCGQ11LM). Leaks are time-critical, so these
+# fire IMMEDIATELY (no `for:` debounce). High-priority Companion-app push
+# (interruption-level: time-sensitive breaks through Focus/silent) plus a
+# spoken Sonos alert. NOTE: Sonos TTS is intentionally ON for leaks even
+# though door announcements were removed 2026-06-17 — a flood is rare and
+# worth an audible whole-home warning. Entity id standardized to
+# binary_sensor.leak_<spot>_water_leak in the HA UI (HA defaults it to
+# binary_sensor.0x..._moisture at discovery).
+# ─────────────────────────────────────────────────────────────────────
+
+# ── Sump pump ──
+- id: leak_sump_detected
+  alias: "Sump leak detected → push + Sonos (critical)"
+  description: >
+    Water at the basement sump pump. Fires the instant the sensor goes
+    wet (no debounce). High-priority phone push + spoken Sonos warning.
+    Re-arms automatically when it dries out.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.leak_sump_water_leak
+      to: "on"
+  action:
+    - service: notify.mobile_app_brian_nicholss_iphone
+      data:
+        title: "💧 WATER LEAK — Sump pump"
+        message: "Water detected at the basement sump pump. Check now."
+        data:
+          push:
+            interruption-level: time-sensitive
+          tag: leak_sump
+    - service: tts.cloud_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "Warning. Water leak detected at the sump pump in the basement."
+  mode: single
+
+- id: leak_sump_cleared
+  alias: "Sump leak cleared → push"
+  description: >
+    The sump leak sensor dried out — follow-up so you know the water is
+    gone. Push only (no Sonos).
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.leak_sump_water_leak
+      to: "off"
+  action:
+    - service: notify.mobile_app_brian_nicholss_iphone
+      data:
+        title: "Sump leak cleared"
+        message: "The sump pump leak sensor is dry again."
+        data:
+          push:
+            tag: leak_sump
+  mode: single
