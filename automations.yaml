@@ -17,7 +17,10 @@
 
 # ─────────────────────────────────────────────────────────────────────
 # Door contact sensors (Aqara MCCGQ11LM via Z2M MQTT discovery).
-# Each door fires a Pushover alert if it stays open ≥ 1 minute.
+# Each door pushes a HA Companion app notification if it stays open
+# ≥ 1 minute. Channel switched from Pushover → mobile_app on 2026-06-17.
+# NOTE: only Brian's iPhone is registered today; add a notify group
+# once the spouse's phone is enrolled so both get alerted.
 # Sonos TTS announcements were removed 2026-06-17 (too chatty across
 # four doors). Entity IDs standardized to binary_sensor.<slug>_contact
 # in the HA UI (Z2M renames don't change the IEEE-locked entity_id).
@@ -35,7 +38,7 @@
       to: "on"
       for: "00:01:00"
   action:
-    - service: notify.pushover
+    - service: notify.mobile_app_brian_nicholss_iphone
       data:
         title: "Front door open"
         message: "The front door has been open for 1 minute."
@@ -53,7 +56,7 @@
       to: "on"
       for: "00:01:00"
   action:
-    - service: notify.pushover
+    - service: notify.mobile_app_brian_nicholss_iphone
       data:
         title: "Back door open"
         message: "The back door has been open for 1 minute."
@@ -71,7 +74,7 @@
       to: "on"
       for: "00:01:00"
   action:
-    - service: notify.pushover
+    - service: notify.mobile_app_brian_nicholss_iphone
       data:
         title: "Garage door open"
         message: "The garage door has been open for 1 minute."
@@ -89,7 +92,7 @@
       to: "on"
       for: "00:01:00"
   action:
-    - service: notify.pushover
+    - service: notify.mobile_app_brian_nicholss_iphone
       data:
         title: "Side door open"
         message: "The side door has been open for 1 minute."
