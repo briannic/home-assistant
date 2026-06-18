@@ -15,15 +15,26 @@
       data: {}
   mode: single
 
+# ─────────────────────────────────────────────────────────────────────
+# Door contact sensors (Aqara MCCGQ11LM via Z2M MQTT discovery).
+# Each door gets the same three-automation pattern, cloned from the
+# original front-door set:
+#   <door>_opened_tts        open (1 s debounce) → Sonos TTS announce
+#   <door>_open_1min_pushover open ≥ 1 min       → Pushover escalation
+#   <door>_closed_tts        closed              → Sonos TTS announce
+# Entity IDs were standardized to binary_sensor.<slug>_contact in the
+# HA UI (Z2M renames don't change the IEEE-locked entity_id).
+# ─────────────────────────────────────────────────────────────────────
+
+# ── Front door ──
 - id: front_door_opened_tts
   alias: "Front door opened → Sonos TTS"
   description: >
-    Aqara MCCGQ11LM via Z2M MQTT discovery. Announce on
-    the Sonos Move as soon as the front door opens (1 s
+    Announce on the Sonos Move as soon as the front door opens (1 s
     debounce to avoid sensor flicker). Re-arms on close.
   trigger:
     - platform: state
-      entity_id: binary_sensor.0x00158d008c8b2049_door
+      entity_id: binary_sensor.front_door_contact
       to: "on"
       for: "00:00:01"
   action:
@@ -42,7 +53,7 @@
     door remains open.
   trigger:
     - platform: state
-      entity_id: binary_sensor.0x00158d008c8b2049_door
+      entity_id: binary_sensor.front_door_contact
       to: "on"
       for: "00:01:00"
   action:
@@ -59,11 +70,164 @@
     Provides audible confirmation the door has been shut.
   trigger:
     - platform: state
-      entity_id: binary_sensor.0x00158d008c8b2049_door
+      entity_id: binary_sensor.front_door_contact
       to: "off"
   action:
     - service: tts.cloud_say
       data:
         entity_id: media_player.sonos_move
         message: "The front door is closed."
+  mode: single
+
+# ── Back door ──
+- id: back_door_opened_tts
+  alias: "Back door opened → Sonos TTS"
+  description: >
+    Announce on the Sonos Move as soon as the back door opens (1 s
+    debounce to avoid sensor flicker). Re-arms on close.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.back_door_contact
+      to: "on"
+      for: "00:00:01"
+  action:
+    - service: tts.cloud_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "The back door is open."
+  mode: single
+
+- id: back_door_open_1min_pushover
+  alias: "Back door open 1 min → Pushover"
+  description: >
+    If the back-door contact sensor stays open continuously for 1
+    minute, send a Pushover alert to phone. Mode: single — won't
+    re-fire while the door remains open.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.back_door_contact
+      to: "on"
+      for: "00:01:00"
+  action:
+    - service: notify.pushover
+      data:
+        title: "Back door open"
+        message: "The back door has been open for 1 minute."
+  mode: single
+
+- id: back_door_closed_tts
+  alias: "Back door closed → Sonos TTS"
+  description: >
+    Announce on the Sonos Move when the back door closes.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.back_door_contact
+      to: "off"
+  action:
+    - service: tts.cloud_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "The back door is closed."
+  mode: single
+
+# ── Garage door ──
+- id: garage_door_opened_tts
+  alias: "Garage door opened → Sonos TTS"
+  description: >
+    Announce on the Sonos Move as soon as the garage door opens (1 s
+    debounce to avoid sensor flicker). Re-arms on close.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door_contact
+      to: "on"
+      for: "00:00:01"
+  action:
+    - service: tts.cloud_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "The garage door is open."
+  mode: single
+
+- id: garage_door_open_1min_pushover
+  alias: "Garage door open 1 min → Pushover"
+  description: >
+    If the garage-door contact sensor stays open continuously for 1
+    minute, send a Pushover alert to phone. Mode: single — won't
+    re-fire while the door remains open.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door_contact
+      to: "on"
+      for: "00:01:00"
+  action:
+    - service: notify.pushover
+      data:
+        title: "Garage door open"
+        message: "The garage door has been open for 1 minute."
+  mode: single
+
+- id: garage_door_closed_tts
+  alias: "Garage door closed → Sonos TTS"
+  description: >
+    Announce on the Sonos Move when the garage door closes.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door_contact
+      to: "off"
+  action:
+    - service: tts.cloud_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "The garage door is closed."
+  mode: single
+
+# ── Side door ──
+- id: side_door_opened_tts
+  alias: "Side door opened → Sonos TTS"
+  description: >
+    Announce on the Sonos Move as soon as the side door opens (1 s
+    debounce to avoid sensor flicker). Re-arms on close.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.side_door_contact
+      to: "on"
+      for: "00:00:01"
+  action:
+    - service: tts.cloud_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "The side door is open."
+  mode: single
+
+- id: side_door_open_1min_pushover
+  alias: "Side door open 1 min → Pushover"
+  description: >
+    If the side-door contact sensor stays open continuously for 1
+    minute, send a Pushover alert to phone. Mode: single — won't
+    re-fire while the door remains open.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.side_door_contact
+      to: "on"
+      for: "00:01:00"
+  action:
+    - service: notify.pushover
+      data:
+        title: "Side door open"
+        message: "The side door has been open for 1 minute."
+  mode: single
+
+- id: side_door_closed_tts
+  alias: "Side door closed → Sonos TTS"
+  description: >
+    Announce on the Sonos Move when the side door closes.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.side_door_contact
+      to: "off"
+  action:
+    - service: tts.cloud_say
+      data:
+        entity_id: media_player.sonos_move
+        message: "The side door is closed."
   mode: single
