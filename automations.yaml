@@ -147,3 +147,31 @@
           push:
             tag: sump_pump_leak
   mode: single
+
+# ─────────────────────────────────────────────────────────────────────
+# Basement humidity (Ecowitt GW1100B channel 3). Above ~60% RH is the
+# mold/mildew risk threshold for a basement.
+# ─────────────────────────────────────────────────────────────────────
+- id: basement_humidity_high
+  alias: "Basement humidity ≥ 60% → push"
+  description: >
+    Alert when basement RH stays at or above 60% for 10 minutes (the
+    mold-risk threshold). The 10-min debounce avoids firing on a momentary
+    spike. Mode: single — won't re-fire while it stays high; re-arms once
+    it drops back below 60%.
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.gw1100b_humidity_3
+      above: 60
+      for: "00:10:00"
+  action:
+    - service: notify.mobile_app_brian_nicholss_iphone
+      data:
+        title: "Basement humidity high"
+        message: >-
+          Basement humidity is {{ states('sensor.gw1100b_humidity_3') }}%
+          (≥60% — mold risk). Consider running a dehumidifier.
+        data:
+          push:
+            tag: basement_humidity
+  mode: single
