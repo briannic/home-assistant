@@ -110,15 +110,15 @@
 # ─────────────────────────────────────────────────────────────────────
 
 # ── Sump pump ──
-- id: leak_sump_detected
-  alias: "Sump leak detected → push + Sonos (critical)"
+- id: sump_pump_leak_detected
+  alias: "Sump pump leak detected → push + Sonos (critical)"
   description: >
     Water at the basement sump pump. Fires the instant the sensor goes
     wet (no debounce). High-priority phone push + spoken Sonos warning.
     Re-arms automatically when it dries out.
   trigger:
     - platform: state
-      entity_id: binary_sensor.leak_sump_water_leak
+      entity_id: binary_sensor.sump_pump_water_leak
       to: "on"
   action:
     - service: notify.mobile_app_brian_nicholss_iphone
@@ -128,21 +128,21 @@
         data:
           push:
             interruption-level: time-sensitive
-          tag: leak_sump
+          tag: sump_pump_leak
     - service: tts.cloud_say
       data:
         entity_id: media_player.sonos_move
         message: "Warning. Water leak detected at the sump pump in the basement."
   mode: single
 
-- id: leak_sump_cleared
-  alias: "Sump leak cleared → push"
+- id: sump_pump_leak_cleared
+  alias: "Sump pump leak cleared → push"
   description: >
     The sump leak sensor dried out — follow-up so you know the water is
     gone. Push only (no Sonos).
   trigger:
     - platform: state
-      entity_id: binary_sensor.leak_sump_water_leak
+      entity_id: binary_sensor.sump_pump_water_leak
       to: "off"
   action:
     - service: notify.mobile_app_brian_nicholss_iphone
@@ -151,5 +151,5 @@
         message: "The sump pump leak sensor is dry again."
         data:
           push:
-            tag: leak_sump
+            tag: sump_pump_leak
   mode: single
