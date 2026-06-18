@@ -4,6 +4,18 @@ views:
     max_columns: 4
     sections:
       - type: grid
+        title: Forecast
+        cards:
+          - type: weather-forecast
+            entity: weather.forecast_home
+            forecast_type: daily
+            show_current: true
+          - type: weather-forecast
+            entity: weather.forecast_home
+            forecast_type: hourly
+            show_current: false
+
+      - type: grid
         title: Outdoor
         cards:
           - type: sensor
