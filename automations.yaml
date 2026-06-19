@@ -148,6 +148,46 @@
             tag: sump_pump_leak
   mode: single
 
+# ── Basement floor ──
+- id: basement_water_leak_detected
+  alias: "Basement floor leak detected → push (critical)"
+  description: >
+    Water on the basement floor. Fires the instant the sensor goes wet
+    (no debounce). High-priority phone push, no Sonos. Re-arms when dry.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.basement_water_leak
+      to: "on"
+  action:
+    - service: notify.mobile_app_brian_nicholss_iphone
+      data:
+        title: "💧 WATER LEAK — Basement floor"
+        message: "Water detected on the basement floor. Check now."
+        data:
+          push:
+            interruption-level: time-sensitive
+          tag: basement_water_leak
+  mode: single
+
+- id: basement_water_leak_cleared
+  alias: "Basement floor leak cleared → push"
+  description: >
+    The basement floor leak sensor dried out — follow-up so you know the
+    water is gone. Push only.
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.basement_water_leak
+      to: "off"
+  action:
+    - service: notify.mobile_app_brian_nicholss_iphone
+      data:
+        title: "Basement floor leak cleared"
+        message: "The basement floor leak sensor is dry again."
+        data:
+          push:
+            tag: basement_water_leak
+  mode: single
+
 # ─────────────────────────────────────────────────────────────────────
 # Basement humidity (Ecowitt GW1100B channel 3). Above ~60% RH is the
 # mold/mildew risk threshold for a basement.
